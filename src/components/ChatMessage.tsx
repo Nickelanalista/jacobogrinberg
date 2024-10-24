@@ -1,5 +1,4 @@
 import React from 'react';
-import { Bot, User } from 'lucide-react';
 import { Message } from '../types';
 
 interface ChatMessageProps {
@@ -11,23 +10,28 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
   
   return (
     <div className={`flex items-start gap-4 ${isBot ? 'flex-row' : 'flex-row-reverse'}`}>
-      <div className={`flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center
-                      ${isBot ? 
-                        'bg-gradient-to-br from-blue-500 to-purple-500' : 
-                        'bg-gradient-to-br from-green-500 to-emerald-500'}`}>
-        {isBot ? (
-          <Bot className="w-6 h-6 text-white" />
-        ) : (
-          <User className="w-6 h-6 text-white" />
-        )}
-      </div>
+      {isBot ? (
+        <div className="flex-shrink-0 w-10 h-10 rounded-full overflow-hidden border-2 border-blue-500 dark:border-blue-400">
+          <img 
+            src="/src/assets/jacobo-grinberg.jpg" 
+            alt="Jacobo Grinberg" 
+            className="w-full h-full object-cover"
+          />
+        </div>
+      ) : (
+        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center">
+          <img 
+            src="/src/assets/user-avatar.png" 
+            alt="User" 
+            className="w-full h-full object-cover"
+          />
+        </div>
+      )}
       <div className={`flex-1 px-6 py-4 rounded-2xl max-w-[80%] relative
                       ${isBot ? 
-                        'bg-white dark:bg-gray-800 shadow-lg' : 
-                        'bg-blue-500 dark:bg-blue-600'}`}>
-        <p className={`text-sm md:text-base ${
-          isBot ? 'text-gray-800 dark:text-gray-200' : 'text-white'
-        }`}>
+                        'bg-gray-700 text-white' : 
+                        'bg-blue-500 text-white'}`}>
+        <p className="text-sm md:text-base">
           {message.content}
         </p>
         

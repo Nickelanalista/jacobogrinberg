@@ -1,23 +1,36 @@
 import React from 'react';
-import { Bot } from 'lucide-react';
 
-export const Header: React.FC = () => {
+interface HeaderProps {
+  resetChat: () => void;
+  isDark: boolean;
+}
+
+export const Header: React.FC<HeaderProps> = ({ resetChat, isDark }) => {
   return (
     <div className="relative">
-      <div className="flex items-center gap-3 p-4 border-b border-gray-200 dark:border-gray-800
+      <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800
                       bg-white/50 dark:bg-gray-900/50 backdrop-blur-lg">
-        <div className="flex items-center justify-center w-10 h-10 rounded-xl
-                        bg-gradient-to-br from-blue-500 to-purple-500">
-          <Bot className="w-6 h-6 text-white" />
-        </div>
-        <div>
-          <h1 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
-            Jacobo Grinberg AI
-          </h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            @CordilleraLabs
-          </p>
-        </div>
+        <button 
+          onClick={resetChat}
+          className="flex items-center gap-3 focus:outline-none"
+          aria-label="Reset chat"
+        >
+          <div className={`flex-shrink-0 w-10 h-10 rounded-full overflow-hidden border-2 ${
+            isDark ? 'border-blue-500' : 'border-yellow-500'
+          }`}>
+            <img 
+              src="/src/assets/jacobo-grinberg2.jpg" 
+              alt="Jacobo Grinberg" 
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="w-px h-8 bg-gray-300 dark:bg-gray-700 mx-3 opacity-50"></div>
+          <div>
+            <h1 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
+              Jacobo Grinberg AI
+            </h1>
+          </div>
+        </button>
       </div>
       
       <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r 

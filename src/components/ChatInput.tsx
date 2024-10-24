@@ -25,7 +25,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading }
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Type your message..."
+          placeholder="Escribe tu pregunta..."
           className="w-full px-6 py-4 rounded-xl
                      bg-gray-100 dark:bg-gray-800
                      border border-gray-200 dark:border-gray-700

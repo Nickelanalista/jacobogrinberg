@@ -18,6 +18,13 @@ try {
 }
 
 function App() {
+  const chatStarters = [
+    "¿Qué es la Teoría Sintérgica?",
+    "¿Qué opinas sobre la realidad?",
+    "¿Cómo se relaciona el trabajo de Grinberg con la física cuántica?",
+    "Explica el concepto de 'lattice' en la teoría de Grinberg"
+  ];
+
   const [isDark, setIsDark] = useState(() => {
     const savedTheme = localStorage.getItem('theme');
     return savedTheme ? savedTheme === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -87,11 +94,14 @@ function App() {
         const assistantMessage = response.data[0];
         
         if (assistantMessage.role === 'assistant') {
+          const messageContent = assistantMessage.content[0];
+          const textContent = 'text' in messageContent ? messageContent.text.value : 'Contenido no textual';
+          
           setChatState(prev => ({
             ...prev,
             messages: [...prev.messages, {
               role: 'assistant',
-              content: assistantMessage.content[0].text.value
+              content: textContent
             }],
             isLoading: false
           }));
@@ -113,6 +123,10 @@ function App() {
     setIsDark(prev => !prev);
   };
 
+  const resetChat = () => {
+    setChatState({ messages: [], isLoading: false, error: null });
+  };
+
   return (
     <div className={`${isDark ? 'dark' : ''} min-h-screen`}>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 
@@ -121,30 +135,50 @@ function App() {
         <div className="container mx-auto max-w-4xl h-screen p-4">
           <div className="h-full flex flex-col rounded-2xl overflow-hidden
                         bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl shadow-2xl">
-            <Header />
+            <Header resetChat={resetChat} isDark={isDark} />
             <ThemeToggle isDark={isDark} toggleTheme={toggleTheme} />
             
             <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
               {chatState.messages.length === 0 && (
-                <div className="flex flex-col items-center justify-center h-full space-y-4">
-                  <div className="w-16 h-16 rounded-full bg-blue-500/10 dark:bg-blue-400/10 
-                                flex items-center justify-center">
-                    <div className="w-8 h-8 rounded-full bg-blue-500 dark:bg-blue-400 
-                                  animate-pulse" />
+                <div className="flex flex-col items-center justify-center h-full space-y-6 px-4">
+                  <div className={`w-24 h-24 rounded-full overflow-hidden border-4 ${
+                    isDark ? 'border-blue-500' : 'border-yellow-500'
+                  } transition-colors duration-300`}>
+                    <img 
+                      src="/src/assets/jacobo-grinberg.jpg" 
+                      alt="Jacobo Grinberg" 
+                      className="w-full h-full object-cover"
+                    />
                   </div>
-                  <div className="text-center space-y-2">
+                  <div className="text-center space-y-3 max-w-md mx-auto">
                     <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300">
                       Bienvenido a Jacobo Grinberg AI
                     </h2>
-                    <p className="text-gray-500 dark:text-gray-400 max-w-sm">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
                       Inicia una conversación con tu asistente de Jacobo Grinberg AI. Haz preguntas, obtén ayuda o simplemente chatea sobre sus teorías e investigaciones.
                     </p>
+                    <div className="grid grid-cols-2 gap-2 mt-3 max-w-xs mx-auto">
+                      {chatStarters.map((starter, index) => (
+                        <button
+                          key={index}
+                          onClick={() => handleSendMessage(starter)}
+                          className="px-2 py-1 bg-blue-600 text-white 
+                                     rounded-lg hover:bg-blue-700 transition-colors 
+                                     duration-200 text-[10px] text-left overflow-hidden 
+                                     h-12 flex items-center"
+                        >
+                          <span className="truncate w-full">
+                            {starter}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
               )}
               
               {chatState.messages.map((message, index) => (
-                <ChatMessage key={index} message={message} />
+                <ChatMessage key={index} message={message} isDark={isDark} />
               ))}
               
               {chatState.isLoading && (
@@ -172,6 +206,9 @@ function App() {
               onSendMessage={handleSendMessage}
               isLoading={chatState.isLoading}
             />
+            <div className="text-center py-2 text-sm text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800">
+              Desarrollado por @CordilleraLabs
+            </div>
           </div>
         </div>
       </div>
