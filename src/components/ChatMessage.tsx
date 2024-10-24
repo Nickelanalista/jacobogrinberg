@@ -13,7 +13,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
       {isBot ? (
         <div className="flex-shrink-0 w-10 h-10 rounded-full overflow-hidden border-2 border-blue-500 dark:border-blue-400">
           <img 
-            src="/src/assets/jacobo-grinberg.jpg" 
+            src="/assets/jacobo-grinberg.jpg" 
             alt="Jacobo Grinberg" 
             className="w-full h-full object-cover"
           />
@@ -21,7 +21,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
       ) : (
         <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center">
           <img 
-            src="/src/assets/user-avatar.png" 
+            src="/assets/user-avatar.png" 
             alt="User" 
             className="w-full h-full object-cover"
           />

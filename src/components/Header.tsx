@@ -19,7 +19,7 @@ export const Header: React.FC<HeaderProps> = ({ resetChat, isDark }) => {
             isDark ? 'border-blue-500' : 'border-yellow-500'
           }`}>
             <img 
-              src="/src/assets/jacobo-grinberg2.jpg" 
+              src="/assets/jacobo-grinberg2.jpg" 
               alt="Jacobo Grinberg" 
               className="w-full h-full object-cover"
             />
