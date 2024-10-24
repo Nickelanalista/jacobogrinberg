@@ -6,6 +6,8 @@ import { Header } from './components/Header';
 import { Message, ChatState } from './types';
 import OpenAI from 'openai';
 import { config } from './config/env';
+import { motion } from 'framer-motion';
+import { User } from 'lucide-react';
 
 let openai: OpenAI;
 try {
@@ -38,6 +40,8 @@ function App() {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  const [windowHeight, setWindowHeight] = useState(window.innerHeight);
+
   useEffect(() => {
     // Apply theme to document
     document.documentElement.classList.toggle('dark', isDark);
@@ -46,12 +50,41 @@ function App() {
   }, [isDark]);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   useEffect(() => {
     scrollToBottom();
   }, [chatState.messages]);
+
+  useEffect(() => {
+    const chatContainer = document.querySelector('.overflow-y-auto');
+    if (chatContainer) {
+      const handleScroll = () => {
+        const { scrollTop, scrollHeight, clientHeight } = chatContainer;
+        if (scrollHeight - scrollTop === clientHeight) {
+          scrollToBottom();
+        }
+      };
+      chatContainer.addEventListener('scroll', handleScroll);
+      return () => chatContainer.removeEventListener('scroll', handleScroll);
+    }
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowHeight(window.innerHeight);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    // Ajuste inicial
+    handleResize();
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleSendMessage = async (content: string) => {
     if (!openai) {
@@ -128,17 +161,21 @@ function App() {
   };
 
   return (
-    <div className={`${isDark ? 'dark' : ''} min-h-screen`}>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 
-                      dark:from-gray-900 dark:via-blue-950 dark:to-purple-950 
-                      transition-colors duration-500">
-        <div className="container mx-auto max-w-4xl h-screen p-4">
+    <div className={`${isDark ? 'dark' : ''} min-h-screen flex flex-col`}>
+      <div 
+        className="flex-grow bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 
+                   dark:from-gray-900 dark:via-blue-950 dark:to-purple-950 
+                   transition-colors duration-500"
+        style={{ minHeight: `${windowHeight}px` }}
+      >
+        <div className="container mx-auto max-w-4xl h-full p-4 flex flex-col">
           <div className="h-full flex flex-col rounded-2xl overflow-hidden
-                        bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl shadow-2xl">
+                        bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl shadow-2xl"
+             style={{ minHeight: '600px' }}>
             <Header resetChat={resetChat} isDark={isDark} />
             <ThemeToggle isDark={isDark} toggleTheme={toggleTheme} />
             
-            <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
+            <div className="flex-1 overflow-y-auto px-2 sm:px-4 py-4 sm:py-6 space-y-4 sm:space-y-6 chat-container" style={{ minHeight: '400px' }}>
               {chatState.messages.length === 0 && (
                 <div className="flex flex-col items-center justify-center h-full space-y-6 px-4">
                   <div className={`w-24 h-24 rounded-full overflow-hidden border-4 ${
@@ -154,6 +191,10 @@ function App() {
                     <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300">
                       Bienvenido a Jacobo Grinberg AI
                     </h2>
+                    <div className="flex items-center justify-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
+                      <span>By @CordilleraLabs</span>
+                      <User size={16} />
+                    </div>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
                       Inicia una conversación con tu asistente de Jacobo Grinberg AI. Haz preguntas, obtén ayuda o simplemente chatea sobre sus teorías e investigaciones.
                     </p>
@@ -162,10 +203,11 @@ function App() {
                         <button
                           key={index}
                           onClick={() => handleSendMessage(starter)}
-                          className="px-2 py-1 bg-blue-600 text-white 
-                                     rounded-lg hover:bg-blue-700 transition-colors 
+                          className="px-2 py-1 bg-gray-800/30 text-white 
+                                     rounded-lg hover:bg-gray-700/50 transition-colors 
                                      duration-200 text-[10px] text-left overflow-hidden 
-                                     h-12 flex items-center"
+                                     h-12 flex items-center backdrop-blur-sm
+                                     border border-gray-600 dark:border-gray-400"
                         >
                           <span className="truncate w-full">
                             {starter}
@@ -178,17 +220,48 @@ function App() {
               )}
               
               {chatState.messages.map((message, index) => (
-                <ChatMessage key={index} message={message} isDark={isDark} />
+                <ChatMessage 
+                  key={index} 
+                  message={message} 
+                  isDark={isDark} 
+                  timestamp={new Date()} // Agregamos esta línea
+                />
               ))}
               
               {chatState.isLoading && (
-                <div className="flex justify-center">
-                  <div className="flex items-center space-x-2 text-blue-500 dark:text-blue-400">
-                    <div className="w-2 h-2 rounded-full animate-bounce [animation-delay:-0.3s]" />
-                    <div className="w-2 h-2 rounded-full animate-bounce [animation-delay:-0.15s]" />
-                    <div className="w-2 h-2 rounded-full animate-bounce" />
-                  </div>
-                </div>
+                <motion.div 
+                  className="flex justify-center items-center space-x-2 my-4"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <motion.div
+                    className="w-4 h-4 bg-blue-500 rounded-full"
+                    animate={{
+                      scale: [1, 1.5, 1],
+                      rotate: [0, 180, 360],
+                    }}
+                    transition={{
+                      duration: 1,
+                      ease: "easeInOut",
+                      times: [0, 0.5, 1],
+                      repeat: Infinity,
+                    }}
+                  />
+                  <motion.div
+                    className="text-blue-500 font-medium"
+                    animate={{
+                      opacity: [1, 0.5, 1],
+                    }}
+                    transition={{
+                      duration: 1.5,
+                      ease: "easeInOut",
+                      repeat: Infinity,
+                    }}
+                  >
+                    Jacobo está pensando...
+                  </motion.div>
+                </motion.div>
               )}
               
               {chatState.error && (
