@@ -167,15 +167,15 @@ function App() {
       <div className="flex-grow bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 
                     dark:from-gray-900 dark:via-blue-950 dark:to-purple-950 
                     transition-colors duration-500 overflow-hidden">
-        <div className="container mx-auto h-full p-4 flex flex-col max-w-2xl">
+        <div className="container mx-auto h-full p-2 sm:p-4 flex flex-col max-w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl">
           <div className="h-full flex flex-col rounded-2xl overflow-hidden
                         bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl shadow-2xl">
             <Header resetChat={resetChat} isDark={isDark} />
             <ThemeToggle isDark={isDark} toggleTheme={toggleTheme} />
             
-            <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+            <div className="flex-1 overflow-y-auto px-2 sm:px-4 py-2 sm:py-4 space-y-4">
               {chatState.messages.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-full space-y-6 px-4">
+                <div className="flex flex-col items-center justify-center h-full space-y-4 sm:space-y-6 px-2 sm:px-4">
                   <div className={`w-24 h-24 rounded-full overflow-hidden border-4 ${
                     isDark ? 'border-blue-500' : 'border-yellow-500'
                   } transition-colors duration-300`}>
