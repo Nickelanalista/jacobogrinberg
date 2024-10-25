@@ -3,11 +3,12 @@ import React from 'react';
 interface HeaderProps {
   resetChat: () => void;
   isDark: boolean;
+  className?: string;
 }
 
-export const Header: React.FC<HeaderProps> = ({ resetChat, isDark }) => {
+export const Header: React.FC<HeaderProps> = ({ resetChat, isDark, className = '' }) => {
   return (
-    <div className="relative">
+    <div className={`relative ${className}`}>
       <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800
                       bg-white/50 dark:bg-gray-900/50 backdrop-blur-lg">
         <button 

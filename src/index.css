@@ -74,11 +74,29 @@
 @media (max-width: 640px) {
   html, body {
     height: 100%;
-    overflow: hidden;
+    overflow-y: auto;
   }
 
   #root {
     height: 100%;
-    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Ajustar tamaño de fuente para dispositivos móviles */
+  body {
+    font-size: 14px;
+  }
+
+  /* Reducir padding en contenedores principales */
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* Ajustar tamaño de botones y elementos interactivos */
+  button, input {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
   }
 }
