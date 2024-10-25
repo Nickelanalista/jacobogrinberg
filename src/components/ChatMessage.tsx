@@ -17,12 +17,16 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isDark, times
   const [displayedContent, setDisplayedContent] = useState('');
   const [isTyping, setIsTyping] = useState(isBot);
   const [isCopied, setIsCopied] = useState(false);
+  const [isCopyPressed, setIsCopyPressed] = useState(false);
+  const [isSharePressed, setIsSharePressed] = useState(false);
   
   const bgColor = isBot
-    ? isDark ? 'bg-gray-800' : 'bg-gray-200'
-    : isDark ? 'bg-blue-600' : 'bg-blue-400';
+    ? isDark ? 'bg-gray-800' : 'bg-white'
+    : isDark ? 'bg-gradient-to-br from-teal-700 to-blue-700' : 'bg-gradient-to-br from-teal-100 to-blue-100';
   
-  const textColor = isBot ? (isDark ? 'text-white' : 'text-black') : 'text-white';
+  const textColor = isBot 
+    ? isDark ? 'text-white' : 'text-gray-800' 
+    : isDark ? 'text-white' : 'text-gray-800';
 
   useEffect(() => {
     if (isBot) {
@@ -42,12 +46,17 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isDark, times
   }, [isBot, message.content]);
 
   const handleCopy = () => {
+    setIsCopyPressed(true);
     navigator.clipboard.writeText(message.content);
     setIsCopied(true);
-    setTimeout(() => setIsCopied(false), 2000); // El mensaje desaparecerá después de 2 segundos
+    setTimeout(() => {
+      setIsCopyPressed(false);
+      setIsCopied(false);
+    }, 800);
   };
 
   const handleShare = () => {
+    setIsSharePressed(true);
     if (navigator.share) {
       navigator.share({
         title: 'Compartir mensaje',
@@ -56,10 +65,13 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isDark, times
     } else {
       console.log('Web Share API no soportada');
     }
+    setTimeout(() => setIsSharePressed(false), 200);
   };
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`;
   };
 
   return (
@@ -93,7 +105,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isDark, times
           {displayedContent}
           {isTyping && (
             <motion.span
-              className="inline-block w-2 h-2 ml-1 bg-current rounded-full"
+              className="inline-block w-2 h-2 ml-1 bg-indigo-400 rounded-full"
               animate={{ opacity: [0, 1] }}
               transition={{ duration: 0.5, repeat: Infinity, repeatType: 'reverse' }}
             />
@@ -104,26 +116,40 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isDark, times
         </p>
         
         {/* Decorative elements */}
-        <div className="absolute inset-0 rounded-2xl opacity-10 
-                        bg-gradient-to-br from-white/50 to-transparent" />
-        <div className="absolute inset-px rounded-2xl opacity-20 
-                        bg-[radial-gradient(circle_at_top_left,_transparent_25%,_white_100%)]" />
+        <div className={`absolute inset-0 rounded-2xl opacity-10 
+                ${isBot 
+                  ? 'bg-gradient-to-br from-white/50 to-transparent'
+                  : isDark 
+                    ? 'bg-gradient-to-br from-teal-400/30 to-transparent'
+                    : 'bg-gradient-to-br from-teal-200/50 to-transparent'
+                }`} />
+        <div className={`absolute inset-px rounded-2xl opacity-20 
+                ${isBot
+                  ? 'bg-[radial-gradient(circle_at_top_left,_transparent_25%,_white_100%)]'
+                  : isDark
+                    ? 'bg-[radial-gradient(circle_at_top_left,_transparent_25%,_teal-300_100%)]'
+                    : 'bg-[radial-gradient(circle_at_top_left,_transparent_25%,_teal-100_100%)]'
+                }`} />
         
         {/* Botones de copiar y compartir */}
-        <div className="absolute bottom-2 right-2 flex space-x-2">
+        <div className="absolute bottom-2 right-2 flex space-x-1.5">
           <button
             onClick={handleCopy}
-            className="p-1 rounded-full bg-white/20 hover:bg-white/30 transition-colors duration-200"
+            className={`p-0.5 rounded-full bg-white/20 hover:bg-white/30 transition-colors duration-200 ${
+              isCopyPressed ? 'transform scale-95 bg-white/40' : ''
+            }`}
             aria-label="Copiar mensaje"
           >
-            <Copy size={16} className="text-current" />
+            <Copy size={14} className="text-current" />
           </button>
           <button
             onClick={handleShare}
-            className="p-1 rounded-full bg-white/20 hover:bg-white/30 transition-colors duration-200"
+            className={`p-0.5 rounded-full bg-white/20 hover:bg-white/30 transition-colors duration-200 ${
+              isSharePressed ? 'transform scale-95 bg-white/40' : ''
+            }`}
             aria-label="Compartir mensaje"
           >
-            <Share2 size={16} className="text-current" />
+            <Share2 size={14} className="text-current" />
           </button>
         </div>
       </div>
@@ -132,6 +158,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isDark, times
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 10 }}
+          transition={{ duration: 0.9 }}
           className="absolute bottom-12 right-2 bg-green-500 text-white px-2 py-1 rounded-md text-xs"
         >
           Copiado al portapapeles

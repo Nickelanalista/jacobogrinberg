@@ -8,6 +8,8 @@ import OpenAI from 'openai';
 import { config } from './config/env';
 import { motion } from 'framer-motion';
 import { User } from 'lucide-react';
+import { TypeAnimation } from 'react-type-animation';
+import { Copy, Share2 } from 'lucide-react';
 
 let openai: OpenAI;
 try {
@@ -161,34 +163,30 @@ function App() {
   };
 
   return (
-    <div className={`${isDark ? 'dark' : ''} min-h-screen flex flex-col`}>
-      <div 
-        className="flex-grow bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 
-                   dark:from-gray-900 dark:via-blue-950 dark:to-purple-950 
-                   transition-colors duration-500"
-        style={{ minHeight: `${windowHeight}px` }}
-      >
-        <div className="container mx-auto max-w-4xl h-full p-4 flex flex-col">
+    <div className={`${isDark ? 'dark' : ''} h-screen flex flex-col`}>
+      <div className="flex-grow bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 
+                    dark:from-gray-900 dark:via-blue-950 dark:to-purple-950 
+                    transition-colors duration-500 overflow-hidden">
+        <div className="container mx-auto h-full p-4 flex flex-col max-w-2xl">
           <div className="h-full flex flex-col rounded-2xl overflow-hidden
-                        bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl shadow-2xl"
-             style={{ minHeight: '600px' }}>
+                        bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl shadow-2xl">
             <Header resetChat={resetChat} isDark={isDark} />
             <ThemeToggle isDark={isDark} toggleTheme={toggleTheme} />
             
-            <div className="flex-1 overflow-y-auto px-2 sm:px-4 py-4 sm:py-6 space-y-4 sm:space-y-6 chat-container" style={{ minHeight: '400px' }}>
-              {chatState.messages.length === 0 && (
+            <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+              {chatState.messages.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full space-y-6 px-4">
                   <div className={`w-24 h-24 rounded-full overflow-hidden border-4 ${
                     isDark ? 'border-blue-500' : 'border-yellow-500'
                   } transition-colors duration-300`}>
                     <img 
-                      src="/src/assets/jacobo-grinberg.jpg" 
+                      src="/jacobo-grinberg.jpg" 
                       alt="Jacobo Grinberg" 
                       className="w-full h-full object-cover"
                     />
                   </div>
                   <div className="text-center space-y-3 max-w-md mx-auto">
-                    <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300">
+                    <h2 className="text-2xl font-semibold text-gray-700 dark:text-gray-300">
                       Bienvenido a Jacobo Grinberg AI
                     </h2>
                     <div className="flex items-center justify-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
@@ -198,15 +196,15 @@ function App() {
                     <p className="text-sm text-gray-500 dark:text-gray-400">
                       Inicia una conversación con tu asistente de Jacobo Grinberg AI. Haz preguntas, obtén ayuda o simplemente chatea sobre sus teorías e investigaciones.
                     </p>
-                    <div className="grid grid-cols-2 gap-2 mt-3 max-w-xs mx-auto">
+                    <div className="grid grid-cols-2 gap-4 mt-6">
                       {chatStarters.map((starter, index) => (
                         <button
                           key={index}
                           onClick={() => handleSendMessage(starter)}
-                          className="px-2 py-1 bg-gray-800/30 text-white 
+                          className="px-3 py-2 bg-gray-800/30 text-white 
                                      rounded-lg hover:bg-gray-700/50 transition-colors 
-                                     duration-200 text-[10px] text-left overflow-hidden 
-                                     h-12 flex items-center backdrop-blur-sm
+                                     duration-200 text-xs text-left overflow-hidden 
+                                     flex items-center backdrop-blur-sm
                                      border border-gray-600 dark:border-gray-400"
                         >
                           <span className="truncate w-full">
@@ -217,16 +215,18 @@ function App() {
                     </div>
                   </div>
                 </div>
+              ) : (
+                <>
+                  {chatState.messages.map((message, index) => (
+                    <ChatMessage 
+                      key={index} 
+                      message={message} 
+                      isDark={isDark} 
+                      timestamp={new Date()}
+                    />
+                  ))}
+                </>
               )}
-              
-              {chatState.messages.map((message, index) => (
-                <ChatMessage 
-                  key={index} 
-                  message={message} 
-                  isDark={isDark} 
-                  timestamp={new Date()} // Agregamos esta línea
-                />
-              ))}
               
               {chatState.isLoading && (
                 <motion.div 
@@ -279,11 +279,11 @@ function App() {
               onSendMessage={handleSendMessage}
               isLoading={chatState.isLoading}
             />
-            <div className="text-center py-2 text-sm text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800">
-              Desarrollado por @CordilleraLabs
-            </div>
           </div>
         </div>
+      </div>
+      <div className="text-center py-2 text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800">
+        Desarrollado por @CordilleraLabs
       </div>
     </div>
   );
